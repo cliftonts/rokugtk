@@ -13,7 +13,7 @@ parts:
   cliftonts:
     plugin: python
     source: https://github.com/cliftonts/rokugtk.git
-    python-packages: [requests, libgtk-3-0]
+    python-packages: [requests, pygtk]
     install: |
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin
       cp rokugtk.py $SNAPCRAFT_PART_INSTALL/bin/
