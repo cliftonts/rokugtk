@@ -1,0 +1,22 @@
+name: rokugtk
+version: 0.0.1
+summary: A Roku remote for Gtk
+description: Control your Roku or Now TV box on your desktop or laptop
+confinement: strict
+
+apps:
+  rokugtk:
+    command: rokugtk.py
+    plugs: [network-bind]
+
+parts:
+  cliftonts:
+    plugin: python
+    source: https://github.com/cliftonts/rokugtk.git
+    python-packages: [requests]
+    install: |
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cp rokugtk.py $SNAPCRAFT_PART_INSTALL/bin/
+      chmod a+x $SNAPCRAFT_PART_INSTALL/bin/rokugtk.py
+  
+
