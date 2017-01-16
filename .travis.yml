@@ -4,7 +4,8 @@ python:
 before_install:
 - sudo apt-get -qq update
 install:
-- pip install requests, wx
+- pip install requests
+- pip install wx
 script:
 - python rokugtk.py
 after_success:
