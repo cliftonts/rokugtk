@@ -1,10 +1,13 @@
 language: python
 python:
 - 2.7
+before_install:
+- sudo apt-get -qq update
 install:
 - pip install requests
+- pip install wx
 script:
-- python rokugtk.py --h
+- python rokugtk.py
 after_success:
 - openssl aes-256-cbc -K $encrypted_f57a449afedc_key -iv $encrypted_f57a449afedc_iv
   -in .snapcraft/travis_snapcraft.cfg -out .snapcraft/snapcraft.cfg -d
