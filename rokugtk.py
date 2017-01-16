@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-#Import modules
+import wx
+from wx.lib.wordwrap import wordwrap
 import sys
 import requests
 import urllib
@@ -10,174 +9,147 @@ if sys.version_info >= (3,0):
 	from gi.repository import Gtk as gtk
 else:
 	import urllib2
-	import pygtk
-	pygtk.require('2.0')
-	import gtk
 
 #Initialise variables
 version = "0.0.1"
 ip = "192.168.0"
 
-class Application():
-	#Initialise window
-	def __init__(self):
-		self.window = gtk.Window()
-		self.window.connect("delete-event", quitting) # no parenthesis; you pass functions to connect
-		self.window.set_title("RokuGtk - " + version)
- 
-		self.create_widgets()
-		self.connect_signals()
+#----------------------------------------------------------------------
 
-		self.window.show_all()
-		find()
-		gtk.main()
-  
-	def create_widgets(self):
-		self.vbox = gtk.VBox(spacing=10)
+class Keypad(wx.Frame):
+    def __init__(self, parent, title):
+	find()
+	ipsplit = ip.split(".")
+	if len(ipsplit) < 4:
+		print ("ROKU NOT FOUND!")
+		quit()
+        #self.log = log
+	super(Keypad, self).__init__(parent, title=title, 
+            size=(285, 200), style=wx.SYSTEM_MENU | wx.CAPTION |	 wx.CLOSE_BOX)
+        #wx.Panel.__init__(self, parent, -1, (350,200))
 
-	        #Add buttons
-		#First row
-		self.hbox_1 = gtk.HBox(spacing=10)
-		self.button_back = gtk.Button("Back")
-		self.button_back.set_size_request(1,4)
-		self.hbox_1.pack_start(self.button_back, True, True, 0)
+        back = wx.Button(self, -1, "Back", (10,10))
+        self.Bind(wx.EVT_BUTTON, self.OnBack, back)
+	up = wx.Button(self, -1, "Up", (100,10))
+	self.Bind(wx.EVT_BUTTON, self.OnUp, up)
+	home = wx.Button(self, -1, "Home", (190,10))
+	self.Bind(wx.EVT_BUTTON, self.OnHome, home)
 
-		self.button_up = gtk.Button("Up")
-		self.button_up.set_size_request(1,4)
-		self.hbox_1.pack_start(self.button_up, True, True, 0)
-     
-		self.button_home = gtk.Button("Home")
-		self.button_home.set_size_request(1,4)
-		self.hbox_1.pack_start(self.button_home, True, True, 0)
+	
+	left = wx.Button(self, -1, "Left", (10,45))
+	self.Bind(wx.EVT_BUTTON, self.OnLeft, left)
+	select = wx.Button(self, -1, "Select", (100,45))
+	self.Bind(wx.EVT_BUTTON, self.OnSelect, select)
+	right = wx.Button(self, -1, "Right", (190,45))
+	self.Bind(wx.EVT_BUTTON, self.OnRight, right)
 
-		#Second row
-		self.hbox_2 = gtk.HBox(spacing=10)
-		self.button_left = gtk.Button("Left")
-		self.button_left.set_size_request(1,4)
-		self.hbox_2.pack_start(self.button_left, True, True, 0)
+	rev = wx.Button(self, -1, "Rev", (10,80))
+	self.Bind(wx.EVT_BUTTON, self.OnRev, rev)
+	down = wx.Button(self, -1, "Down", (100,80))
+	self.Bind(wx.EVT_BUTTON, self.OnDown, down)
+	forward = wx.Button(self, -1, "Forward", (190,80))
+	self.Bind(wx.EVT_BUTTON, self.OnForward, forward)
 
-		self.button_select = gtk.Button("Select")
-		self.button_select.set_size_request(1,4)
-		self.hbox_2.pack_start(self.button_select, True, True, 0)
+	play = wx.Button(self, -1, "Play", (55,115))
+	self.Bind(wx.EVT_BUTTON, self.OnPlay, play)
+	reload = wx.Button(self, -1, "Reload", (145,115))
+	self.Bind(wx.EVT_BUTTON, self.OnReload, reload)
 
-		self.button_right = gtk.Button("Right")
-		self.button_right.set_size_request(1,4)
-		self.hbox_2.pack_start(self.button_right, True, True, 0)
-
-		#Third row
-		self.hbox_3 = gtk.HBox(spacing=10)
-		self.button_reverse = gtk.Button("Reverse")
-		self.button_reverse.set_size_request(1,4)
-		self.hbox_3.pack_start(self.button_reverse, True, True, 0)
-
-		self.button_down = gtk.Button("Down")
-		self.button_down.set_size_request(1,4)
-		self.hbox_3.pack_start(self.button_down, True, True, 0)
-
-		self.button_forward = gtk.Button("Forward")
-		self.button_forward.set_size_request(1,4)
-		self.hbox_3.pack_start(self.button_forward, True, True, 0)
-
-		#Fourth row
-		self.hbox_4 = gtk.HBox(spacing=10)
-		self.button_play = gtk.Button("Play")
-		self.button_play.set_size_request(1,4)
-		self.hbox_4.pack_start(self.button_play, True, True, 0)
-
-		self.button_reload = gtk.Button("Reload")
-		self.button_reload.set_size_request(1,4)
-		self.hbox_4.pack_start(self.button_reload, True, True, 0)
-
-		#Fifth row
-		self.hbox_5 = gtk.HBox(spacing=10)
-		self.button_info = gtk.Button("Info")
-		self.button_info.set_size_request(1,4)
-		self.hbox_5.pack_start(self.button_info, True, True, 0)
-
-		self.button_search = gtk.Button("Search")
-		self.button_search.set_size_request(1,4)
-		self.hbox_5.pack_start(self.button_search, True, True, 0)
- 
-		self.vbox.pack_start(self.hbox_1, True, True, 0)
-		self.vbox.pack_start(self.hbox_2, True, True, 0)
-		self.vbox.pack_start(self.hbox_3, True, True, 0)
-		self.vbox.pack_start(self.hbox_4, True, True, 0)
-		self.vbox.pack_start(self.hbox_5, True, True, 0)
-	 
-		self.window.add(self.vbox)
-		self.window.set_size_request(400, 400)
+	info = wx.Button(self, -1, "Info", (10,150))
+	self.Bind(wx.EVT_BUTTON, self.OnInfo, info)
+	search = wx.Button(self, -1, "Search", (100,150))
+	self.Bind(wx.EVT_BUTTON, self.OnSearch, search)
+	about = wx.Button(self, -1, "About", (190,150))
+	self.Bind(wx.EVT_BUTTON, self.OnAbout, about)
 
 
-	def connect_signals(self):
-		self.button_back.connect("clicked", self.callback_back)
-		self.button_up.connect("clicked", self.callback_up)
-		self.button_home.connect("clicked", self.callback_home)
+	self.Show()
 
-		self.button_left.connect("clicked", self.callback_left)
-		self.button_select.connect("clicked", self.callback_select)
-		self.button_right.connect("clicked", self.callback_right)
 
-		self.button_reverse.connect("clicked", self.callback_reverse)
-		self.button_down.connect("clicked", self.callback_down)
-		self.button_forward.connect("clicked", self.callback_forward)
 
-		self.button_play.connect("clicked", self.callback_play)
-		self.button_reload.connect("clicked", self.callback_reload)
 
-		self.button_info.connect("clicked", self.callback_info)
-	 
- 
-	def callback_back(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/Back"
-		send(cmd)
- 
- 
-	def callback_up(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/Up"
-		send(cmd)
 
-	def callback_home(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/Home"
-		send(cmd)
 
-	def callback_left(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/Left"
-		send(cmd)
 
-	def callback_select(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/Select"
-		send(cmd)
 
-	def callback_right(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/Right"
-		send(cmd)
 
-	def callback_reverse(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/Rev"
-		send(cmd)
 
-	def callback_down(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/Down"
-		send(cmd)
+    def OnBack(self, evt):
+        cmd = "http://" + ip + ":8060/keypress/Back"
+	send(cmd)
 
-	def callback_forward(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/Fwd"
-		send(cmd)
+    def OnUp(self, evt):
+        cmd = "http://" + ip + ":8060/keypress/Up"
+	send(cmd)
 
-	def callback_play(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/Play"
-		send(cmd)
+    def OnHome(self, evt):
+        cmd = "http://" + ip + ":8060/keypress/Home"
+	send(cmd)
 
-	def callback_reload(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/InstantReplay"
-		send(cmd)
+    def OnLeft(self, evt):
+	cmd = "http://" + ip + ":8060/keypress/Left"
+	send(cmd)
 
-	def callback_info(self, widget, callback_data=None):
-		cmd = "http://" + ip + ":8060/keypress/Info"
-		send(cmd)
+    def OnSelect(self, evt):
+	cmd = "http://" + ip + ":8060/keypress/Select"
+	send(cmd)
 
-	def callback_search(self, widget, callback_data=None):
-		print ("Search")
+    def OnRight(self, evt):
+	cmd = "http://" + ip + ":8060/keypress/Right"
+	send(cmd)
+
+    def OnRev(self, evt):
+	cmd = "http://" + ip + ":8060/keypress/Rev"
+	send(cmd)
+
+    def OnDown(self, evt):
+	cmd = "http://" + ip + ":8060/keypress/Down"
+	send(cmd)
+
+    def OnForward(self, evt):
+	cmd = "http://" + ip + ":8060/keypress/Fwd"
+	send(cmd)
+
+    def OnPlay(self, evt):
+	cmd = "http://" + ip + ":8060/keypress/Play"
+	send(cmd)
+
+    def OnReload(self, evt):
+	cmd = "http://" + ip + ":8060/keypress/InstantReplay"
+	send(cmd)
+
+    def OnInfo(self, evt):
+	cmd = "http://" + ip + ":8060/keypress/Info"
+	send(cmd)
+
+    def OnSearch(self, evt):
+	print ("Search")
+	
+    
+    def OnAbout(self, evt):
+        # First we create and fill the info object
+        info = wx.AboutDialogInfo()
+        info.Name = "RokuGtk"
+        info.Version = version
+        info.Copyright = "Released under GPL V3"
+        info.Description = wordwrap(
+            "RokuGtk is a remote control application for controlling "
+            "Roku and Now TV set top boxes."
+            
+            "\n\nIf you have found this program to be useful please consider"
+            "making a small donation towards future development."
+            "\nPaypal:- gareth.france@gmail.com"
+            "\nPPPay.com:- gareth.france@cliftonts.co.uk"
+            "\n\n A massive thank you to kyrofa, elopio and Mark Shuttleworth for their help "
+            "in making the snap version possible.",
+            350, wx.ClientDC(self))
+        info.WebSite = ("www.github.com/cliftonts", "Report bugs on the GitHub page")
+        info.Developers = [ "Gareth France" ]
+
+        info.License = wordwrap(licenseText, 500, wx.ClientDC(self))
+
+        # Then we call wx.AboutBox giving it that info object
+        wx.AboutBox(info)
 
 def send(url):
 	payload = {'': ''}
@@ -189,6 +161,7 @@ def send(url):
 		#r.text
 		#r.status_code
 	except:
+		print (ip)
 		print ("ROKU NOT FOUND!")
         
 
@@ -198,7 +171,7 @@ def find():
 		try:
 			url = 'http://' + ip + '.' + str(i) + ':8060'
 			print ("Attempting - " + ip + "." + str(i))	
-			r = urllib2.urlopen(url, timeout=0.1)
+			r = urllib2.urlopen(url, timeout=0.2)
 			html=r.read()
 			if "Roku" in html:
 				print ("Roku found!")
@@ -207,13 +180,35 @@ def find():
 				break
 		except:
 			pass
+#----------------------------------------------------------------------
 
-#This routine will allow for a pop up window offering donate info upon quit.
-def quitting(tmp, tmp2):
-	print (tmp)
-	print (tmp2)
-	gtk.main_quit()
+def runTest(frame, nb, log):
+    win = TestPanel(nb, log)
+    return win
+
+#----------------------------------------------------------------------
 
 
-if __name__ == "__main__":
-    app = Application()
+
+overview = """<html><body>
+<h2><center>wx.AboutBox</center></h2>
+
+This function shows the native standard about dialog containing the
+information specified in info. If the current platform has a native
+about dialog which is capable of showing all the fields in info, the
+native dialog is used, otherwise the function falls back to the
+generic wxWidgets version of the dialog.
+
+</body></html>
+"""
+
+
+licenseText = "Please see license file included with the source"
+
+
+if __name__ == '__main__':
+    import sys,os
+    app = wx.App()
+    Keypad(None, title='Rokuterm')
+    app.MainLoop()
+
