@@ -24,14 +24,14 @@ class Application():
 		self.window = gtk.Window()
 		self.window.connect("delete-event", quitting) # no parenthesis; you pass functions to connect
 		self.window.set_title("RokuGtk - " + version)
- 
+
 		self.create_widgets()
 		self.connect_signals()
 
 		self.window.show_all()
 		find()
 		gtk.main()
-  
+
 	def create_widgets(self):
 		self.vbox = gtk.VBox(spacing=10)
 
@@ -45,7 +45,7 @@ class Application():
 		self.button_up = gtk.Button("Up")
 		self.button_up.set_size_request(1,4)
 		self.hbox_1.pack_start(self.button_up, True, True, 0)
-     
+
 		self.button_home = gtk.Button("Home")
 		self.button_home.set_size_request(1,4)
 		self.hbox_1.pack_start(self.button_home, True, True, 0)
@@ -97,13 +97,13 @@ class Application():
 		self.button_search = gtk.Button("Search")
 		self.button_search.set_size_request(1,4)
 		self.hbox_5.pack_start(self.button_search, True, True, 0)
- 
+
 		self.vbox.pack_start(self.hbox_1, True, True, 0)
 		self.vbox.pack_start(self.hbox_2, True, True, 0)
 		self.vbox.pack_start(self.hbox_3, True, True, 0)
 		self.vbox.pack_start(self.hbox_4, True, True, 0)
 		self.vbox.pack_start(self.hbox_5, True, True, 0)
-	 
+
 		self.window.add(self.vbox)
 		self.window.set_size_request(400, 400)
 
@@ -125,13 +125,13 @@ class Application():
 		self.button_reload.connect("clicked", self.callback_reload)
 
 		self.button_info.connect("clicked", self.callback_info)
-	 
- 
+
+
 	def callback_back(self, widget, callback_data=None):
 		cmd = "http://" + ip + ":8060/keypress/Back"
 		send(cmd)
- 
- 
+
+
 	def callback_up(self, widget, callback_data=None):
 		cmd = "http://" + ip + ":8060/keypress/Up"
 		send(cmd)
@@ -184,20 +184,20 @@ def send(url):
 	try:
 		# POST with form-encoded data
 		r = requests.post(url, data=payload)
-	
+
 		# Response, status etc
 		#r.text
 		#r.status_code
 	except:
 		print ("ROKU NOT FOUND!")
-        
+
 
 def find():
 	global ip
 	for i in range(1,256):
 		try:
 			url = 'http://' + ip + '.' + str(i) + ':8060'
-			print ("Attempting - " + ip + "." + str(i))	
+			print ("Attempting - " + ip + "." + str(i))
 			r = urllib2.urlopen(url, timeout=0.1)
 			html=r.read()
 			if "Roku" in html:
