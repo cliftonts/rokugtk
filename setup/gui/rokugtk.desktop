@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=0.0.1
+Name=RokuGtk
+GenericName=RokuGtk
+Comment=Roku remote
+Exec=rokugtk
+TryExec=
+Icon=${SNAP}/setup/gui/rokugtk.png
+Terminal=false
+Type=Application
+Categories=Application
+X-KDE-Protocols=
+Keywords=Roku;NowTV;Remote
