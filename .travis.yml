@@ -1,6 +1,6 @@
 language: python
 python:
-- 2.7
+- "2.7"
 # let snapcraft install requests
 #install:
 #- pip install requests
@@ -15,6 +15,7 @@ python:
 #   - "sh -e /etc/init.d/xvfb start"
 #   - sleep 3 # give xvfb some time to start
 # but you will want it to close instead of staying open.
+install: "pip install -r requirements.txt"
 after_success:
 - openssl aes-256-cbc -K $encrypted_f57a449afedc_key -iv $encrypted_f57a449afedc_iv
   -in .snapcraft/travis_snapcraft.cfg -out .snapcraft/snapcraft.cfg -d
