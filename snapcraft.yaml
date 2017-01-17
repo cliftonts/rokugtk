@@ -23,6 +23,8 @@ parts:
       - python-requests
     organize:
       ../build/wrapper: bin/
+    after:
+      - desktop-gtk2
     install: |
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin
       cp rokugtk.py $SNAPCRAFT_PART_INSTALL/bin/

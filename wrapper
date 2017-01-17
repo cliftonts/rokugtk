@@ -13,4 +13,4 @@ export LIBGL_DEBUG=verbose
 
 export PATH=$PATH:/usr/local/bin
 
-$SNAP/bin/rokugtk.py
+desktop-launch $SNAP/bin/rokugtk.py
