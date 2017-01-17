@@ -32,3 +32,4 @@ deploy:
     install snapcraft -y && cd $(pwd) && snapcraft && snapcraft push *.snap --release
     edge"
   skip_cleanup: true
+script: true
