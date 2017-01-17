@@ -7,7 +7,7 @@ grade: devel
 
 apps:
   rokugtk:
-    command: bin/rokugtk.py
+    command: bin/wrapper
     plugs: [network-bind, x11]
 
 parts:
@@ -16,8 +16,13 @@ parts:
     source: .
     python-version: python2
     stage-packages:
+      - fontconfig-config
+      - fonts-dejavu-extra
+      - fonts-ipafont-gothic
       - python-gtk2
       - python-requests
+    organize:
+      ../build/wrapper: bin/
     install: |
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin
       cp rokugtk.py $SNAPCRAFT_PART_INSTALL/bin/
