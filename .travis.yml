@@ -1,10 +1,21 @@
 language: python
 python:
-- 2.7
-install:
-- pip install requests
-script:
-- python rokugtk.py --h
+- "2.7"
+# let snapcraft install requests
+#install:
+#- pip install requests
+# not sure why you are running this script in travis.
+# travis is for doing continuous integration and tests
+# this *should* fail since there is not virtual buffer specified fir display.
+#script:
+#- python rokugtk.py --h
+# if you want to launch it for tests, run this:
+# before_script:
+#   - "export DISPLAY=:99.0"
+#   - "sh -e /etc/init.d/xvfb start"
+#   - sleep 3 # give xvfb some time to start
+# but you will want it to close instead of staying open.
+install: "pip install -r requirements.txt"
 after_success:
 - openssl aes-256-cbc -K $encrypted_f57a449afedc_key -iv $encrypted_f57a449afedc_iv
   -in .snapcraft/travis_snapcraft.cfg -out .snapcraft/snapcraft.cfg -d
@@ -21,3 +32,4 @@ deploy:
     install snapcraft -y && cd $(pwd) && snapcraft && snapcraft push *.snap --release
     edge"
   skip_cleanup: true
+script: true

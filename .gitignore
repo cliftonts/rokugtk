@@ -1,0 +1,8 @@
+#python files
+.pyc
+
+#snapcraft files
+*.snap
+parts/
+prime/
+stage/
