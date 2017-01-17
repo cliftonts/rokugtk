@@ -14,6 +14,7 @@ else:
 	pygtk.require('2.0')
 	import gtk
 
+
 #Initialise variables
 version = "0.0.1"
 ip = "192.168.0"
