@@ -3,12 +3,12 @@ version: 0.0.1
 summary: A Roku remote for Gtk
 description: Control your Roku or Now TV box on your desktop or laptop
 confinement: strict
-grade: devel
+grade: stable
 
 apps:
   rokugtk:
     command: bin/wrapper
-    plugs: [network-bind, x11]
+    plugs: [network-bind, network-control, x11]
 
 parts:
   cliftonts:
