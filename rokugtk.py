@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #Import modules
+import os
 import sys
 import requests
 import urllib
@@ -19,12 +20,20 @@ else:
 version = "0.0.1"
 ip = "192.168.0"
 
+def get_resource_path(rel_path):
+	"""https://stackoverflow.com/questions/4416336/adding-a-program-icon-in-python-gtk"""
+	dir_of_py_file = os.path.dirname(__file__)
+	rel_path_to_resource = os.path.join(dir_of_py_file, rel_path)
+	abs_path_to_resource = os.path.abspath(rel_path_to_resource)
+	return abs_path_to_resource
+
 class Application():
 	#Initialise window
 	def __init__(self):
 		self.window = gtk.Window()
 		self.window.connect("delete-event", quitting) # no parenthesis; you pass functions to connect
 		self.window.set_title("RokuGtk - " + version)
+		self.window.set_icon_from_file(get_resource_path("rokugtk.png"))
 
 		self.create_widgets()
 		self.connect_signals()
