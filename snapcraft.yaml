@@ -23,9 +23,11 @@ parts:
       - python-requests
     organize:
       ../build/wrapper: bin/
+      ../build/rokugtk.png: bin/
+      ../build/rokugtk.py: bin/
     after:
       - desktop-gtk2
-    install: |
-      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
-      cp rokugtk.py $SNAPCRAFT_PART_INSTALL/bin/
+    # install: |
+    #   mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+    #   cp rokugtk.py $SNAPCRAFT_PART_INSTALL/bin/
 #      chmod a+x $SNAPCRAFT_PART_INSTALL/bin/rokugtk.py
