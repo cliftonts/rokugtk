@@ -18,7 +18,7 @@ else:
 
 
 #Initialise variables
-version = "0.1.0" #Also change in snapcraft.yaml and setup/gui/rokugtk.desktop
+version = "0.1.1" #Also change in snapcraft.yaml and setup/gui/rokugtk.desktop
 ip = ""
 
 def get_resource_path(rel_path):
@@ -200,7 +200,14 @@ def send(url):
 		#r.text
 		#r.status_code
 	except:
-		print ("ROKU NOT FOUND!")
+		message = gtk.MessageDialog(parent=None, 
+                            flags=0, 
+                            type=gtk.MESSAGE_WARNING, 
+                            buttons=gtk.BUTTONS_OK, 
+                            message_format=None)
+		message.set_markup("Roku not found!\nPlease try again.")
+		message.run()
+		quit()
 
 
 def find():
@@ -215,7 +222,7 @@ def find():
 	ip = ""
 	for i in range(0, 3):
 		ip = ip + ipsplit[i] + "."
-	ip = "192.168.1."
+
 	for i in range(1,257):
 		try:
 			url = 'http://' + ip + str(i) + ':8060'

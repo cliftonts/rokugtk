@@ -1,5 +1,5 @@
 name: rokugtk
-version: 0.1.0
+version: 0.1.1
 summary: A Roku remote for Gtk
 description: Control your Roku or Now TV box on your desktop or laptop
 confinement: strict
