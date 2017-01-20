@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #Import modules
+import socket
 import os
 import sys
 import requests
@@ -17,8 +18,8 @@ else:
 
 
 #Initialise variables
-version = "0.0.1"
-ip = "192.168.0"
+version = "0.1.0" #Also change in snapcraft.yaml and setup/gui/rokugtk.desktop
+ip = ""
 
 def get_resource_path(rel_path):
 	"""https://stackoverflow.com/questions/4416336/adding-a-program-icon-in-python-gtk"""
@@ -204,24 +205,42 @@ def send(url):
 
 def find():
 	global ip
-	for i in range(1,256):
+
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	s.connect(("8.8.8.8",80))
+	ip = s.getsockname()[0]
+	s.close()
+	ipsplit = ip.split(".")
+
+	ip = ""
+	for i in range(0, 3):
+		ip = ip + ipsplit[i] + "."
+	ip = "192.168.1."
+	for i in range(1,257):
 		try:
-			url = 'http://' + ip + '.' + str(i) + ':8060'
-			print ("Attempting - " + ip + "." + str(i))
+			url = 'http://' + ip + str(i) + ':8060'
+			print ("Attempting - " + ip + str(i))
 			r = urllib2.urlopen(url, timeout=0.1)
 			html=r.read()
 			if "Roku" in html:
 				print ("Roku found!")
-				print (ip + "." + str(i))
-				ip = ip + "." + str(i)
+				print (ip + str(i))
+				ip = ip + str(i)
 				break
 		except:
 			pass
+	if ip[-1:] == ".":
+		message = gtk.MessageDialog(parent=None, 
+                            flags=0, 
+                            type=gtk.MESSAGE_WARNING, 
+                            buttons=gtk.BUTTONS_OK, 
+                            message_format=None)
+		message.set_markup("Roku not found!\nPlease try again.")
+		message.run()
+		quit()
 
-#This routine will allow for a pop up window offering donate info upon quit.
+#This routine will allow for any code to run before quitting.
 def quitting(tmp, tmp2):
-	print (tmp)
-	print (tmp2)
 	gtk.main_quit()
 
 
