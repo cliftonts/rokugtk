@@ -19,7 +19,7 @@ else:
 
 
 #Initialise variables
-version = "0.2.0" #Also change in snapcraft.yaml and setup/gui/rokugtk.desktop
+version = "0.3.0" #Also change in snapcraft.yaml and setup/gui/rokugtk.desktop
 ip = ""
 
 def get_resource_path(rel_path):
@@ -110,6 +110,10 @@ class Application():
 		self.button_search.set_size_request(1,4)
 		self.hbox_5.pack_start(self.button_search, True, True, 0)
 
+		self.button_about = gtk.Button("About")
+		self.button_about.set_size_request(1,4)
+		self.hbox_5.pack_start(self.button_about, True, True, 0)
+
 		self.vbox.pack_start(self.hbox_1, True, True, 0)
 		self.vbox.pack_start(self.hbox_2, True, True, 0)
 		self.vbox.pack_start(self.hbox_3, True, True, 0)
@@ -138,6 +142,7 @@ class Application():
 
 		self.button_info.connect("clicked", self.callback_info)
 		self.button_search.connect("clicked", self.callback_search)
+		self.button_about.connect("clicked", self.callback_about)
 
 	def callback_back(self, widget, callback_data=None):
 		cmd = "http://" + ip + ":8060/keypress/Back"
@@ -189,7 +194,6 @@ class Application():
 		send(cmd)
 
 	def callback_search(self, widget, callback_data=None):
-		print ("Search")
 		search = EntryDialog(parent=None, 
                             flags=0, 
                             type=gtk.MESSAGE_INFO, 
@@ -200,6 +204,33 @@ class Application():
 		search.destroy()
 		if searchfor !="None":
 			keyboard(ip, searchfor)
+
+	def callback_about(self, widget, callback_data=None):
+		aboutdialog = gtk.AboutDialog()
+		# lists of authors and documenters (will be used later)
+        	authors = ["Gareth France"]
+
+        	# we fill in the aboutdialog
+        	aboutdialog.set_program_name("RokuGtk " + version)
+		aboutdialog.set_comments("RokuGtk is a remote control application for controlling Roku and Now TV set top boxes.\n\nIf you have found this program to be useful please consider making a small donation towards future development.\nPaypal:- gareth.france@gmail.com\nPPPay.com:- gareth.france@cliftonts.co.uk\n\n A massive thank you to kyrofa, elopio and Mark Shuttleworth for their help in making the snap version possible.")
+        	aboutdialog.set_authors(authors)
+        	aboutdialog.set_website("https://github.com/cliftonts/rokugtk")
+        	aboutdialog.set_website_label("Report issues on GitHub")
+
+        	# we do not want to show the title, which by default would be "About AboutDialog Example"
+        	# we have to reset the title of the messagedialog window after setting
+        	# the program name
+        	aboutdialog.set_title("")
+
+        	# to close the aboutdialog when "close" is clicked we connect the
+        	# "response" signal to on_close
+        	aboutdialog.connect("response", self.on_close)
+        	# show the aboutdialog
+        	aboutdialog.show()
+
+    		# destroy the aboutdialog
+    	def on_close(self, action, parameter):
+    	    action.destroy()
 		
 
 def send(url):
