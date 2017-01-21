@@ -7,6 +7,7 @@ import os
 import sys
 import requests
 import urllib
+import time
 if sys.version_info >= (3,0):
 	import urllib.request
 	from gi.repository import Gtk as gtk
@@ -18,7 +19,7 @@ else:
 
 
 #Initialise variables
-version = "0.1.1" #Also change in snapcraft.yaml and setup/gui/rokugtk.desktop
+version = "0.2.0" #Also change in snapcraft.yaml and setup/gui/rokugtk.desktop
 ip = ""
 
 def get_resource_path(rel_path):
@@ -136,7 +137,7 @@ class Application():
 		self.button_reload.connect("clicked", self.callback_reload)
 
 		self.button_info.connect("clicked", self.callback_info)
-
+		self.button_search.connect("clicked", self.callback_search)
 
 	def callback_back(self, widget, callback_data=None):
 		cmd = "http://" + ip + ":8060/keypress/Back"
@@ -189,6 +190,17 @@ class Application():
 
 	def callback_search(self, widget, callback_data=None):
 		print ("Search")
+		search = EntryDialog(parent=None, 
+                            flags=0, 
+                            type=gtk.MESSAGE_INFO, 
+                            buttons=gtk.BUTTONS_OK, 
+                            message_format=None)
+		search.set_markup("Search")
+		searchfor = search.run()
+		search.destroy()
+		if searchfor !="None":
+			keyboard(ip, searchfor)
+		
 
 def send(url):
 	payload = {'': ''}
@@ -227,7 +239,7 @@ def find():
 		try:
 			url = 'http://' + ip + str(i) + ':8060'
 			print ("Attempting - " + ip + str(i))
-			r = urllib2.urlopen(url, timeout=0.1)
+			r = urllib2.urlopen(url, timeout=0.2)
 			html=r.read()
 			if "Roku" in html:
 				print ("Roku found!")
@@ -245,6 +257,68 @@ def find():
 		message.set_markup("Roku not found!\nPlease try again.")
 		message.run()
 		quit()
+
+class EntryDialog(gtk.MessageDialog):
+    def __init__(self, *args, **kwargs):
+        '''
+        Creates a new EntryDialog. Takes all the arguments of the usual
+        MessageDialog constructor plus one optional named argument 
+        "default_value" to specify the initial contents of the entry.
+        '''
+        if 'default_value' in kwargs:
+            default_value = kwargs['default_value']
+            del kwargs['default_value']
+        else:
+            default_value = ''
+        super(EntryDialog, self).__init__(*args, **kwargs)
+        entry = gtk.Entry()        
+        entry.set_text(str(default_value))
+        entry.connect("activate", 
+                      lambda ent, dlg, resp: dlg.response(resp), 
+                      self, gtk.RESPONSE_OK)
+        self.vbox.pack_end(entry, True, True, 0)
+        self.vbox.show_all()
+        self.entry = entry
+    def set_value(self, text):
+        self.entry.set_text(text)
+    def run(self):
+        result = super(EntryDialog, self).run()
+        if result == gtk.RESPONSE_OK:
+            text = self.entry.get_text()
+        else:
+            text = None
+        return text
+
+def keyboard(ip, keyin):
+	#urllib.quote('/test', safe='')
+
+	#networkCall("POST", "http://" + ip + ":8060/keypress/Backspace");
+	#if sys.version_info < (3,0):
+	for i in keyin:
+		if sys.version_info >= (3,0):
+			url = "http://" + ip + ":8060/keypress/Lit_" + urllib.parse.quote(i, safe='');
+		else:
+			url = "http://" + ip + ":8060/keypress/Lit_" + urllib.quote(i, safe='');
+		payload = {'': ''}
+		try:
+			# POST with form-encoded data
+			r = requests.post(url, data=payload)
+			
+			# Response, status etc
+			#r.text
+			#r.status_code
+		except:
+			message = gtk.MessageDialog(parent=None, 
+                            flags=0, 
+                            type=gtk.MESSAGE_WARNING, 
+                            buttons=gtk.BUTTONS_OK, 
+                            message_format=None)
+			message.set_markup("Roku not found!\nPlease try again.")
+			message.run()
+			quit()
+		time.sleep(0.2)
+	#if sys.version_info < (3,0):
+
 
 #This routine will allow for any code to run before quitting.
 def quitting(tmp, tmp2):
