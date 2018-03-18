@@ -8,6 +8,7 @@ import sys
 import requests
 import urllib
 import time
+import ssdp
 if sys.version_info >= (3,0):
 	import urllib.request
 	from gi.repository import Gtk as gtk
@@ -19,7 +20,7 @@ else:
 
 
 #Initialise variables
-version = "0.3.0" #Also change in snapcraft.yaml and setup/gui/rokugtk.desktop
+version = "0.4.0" #Also change in snapcraft.yaml and setup/gui/rokugtk.desktop
 ip = ""
 
 def get_resource_path(rel_path):
@@ -41,7 +42,8 @@ class Application():
 		self.connect_signals()
 
 		self.window.show_all()
-		find()
+		response = ssdp.discover("roku:ecp")
+		ip = response[0].location
 		gtk.main()
 
 	def create_widgets(self):
