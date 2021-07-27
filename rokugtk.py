@@ -45,11 +45,12 @@ class Application():
 
 		self.window.show_all()
 		response = ssdp.discover("roku:ecp")
-                if len(response) == 0:
-                    find()
-                else:
-                    global ip
+		if len(response) == 0:
+		    find()
+		else:
+		    global ip
 		    ip = response[0].location.encode()
+		    print(ip)
 		Gtk.main()
 
 	def create_widgets(self):
