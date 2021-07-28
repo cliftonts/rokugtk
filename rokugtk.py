@@ -45,7 +45,12 @@ class Application():
 
 		self.window.show_all()
 		response = ssdp.discover("roku:ecp")
-		ip = response[0].location.encode()
+		if len(response) == 0:
+		    find()
+		else:
+		    global ip
+		    ip = response[0].location.encode()
+		    print(ip)
 		Gtk.main()
 
 	def create_widgets(self):
@@ -125,7 +130,7 @@ class Application():
 		self.vbox.pack_start(self.hbox_5, True, True, 0)
 
 		self.window.add(self.vbox)
-		self.window.set_size_request(400, 400)
+		self.window.set_size_request(200, 200)
 
 
 	def connect_signals(self):
@@ -233,8 +238,8 @@ class Application():
 		aboutdialog.show()
 
     		# destroy the aboutdialog
-		def on_close(self, action, parameter):
-			action.destroy()
+	def on_close(self, action, parameter):
+		action.destroy()
 		
 
 def send(url):
@@ -276,7 +281,7 @@ def find():
 			print(("Attempting - " + ip + str(i)))
 			r = urllib.request.urlopen(url, timeout=0.2)
 			html=r.read()
-			if "Roku" in html:
+			if b"Roku" in html:
 				print ("Roku found!")
 				print((ip + str(i)))
 				ip = ip + str(i)
@@ -285,11 +290,10 @@ def find():
 			pass
 	if ip[-1:] == ".":
 		message = Gtk.MessageDialog(parent=None, 
-                            flags=0, 
-                            type=Gtk.MESSAGE_WARNING, 
-                            buttons=Gtk.BUTTONS_OK, 
-                            message_format=None)
-		message.set_markup("Roku not found!\nPlease try again.")
+                            # flags=0, 
+                            message_type=Gtk.MessageType.ERROR, 
+                            buttons=Gtk.ButtonsType.OK, 
+                            text="Roku not found!\nPlease try again.")
 		message.run()
 		quit()
 
@@ -345,9 +349,9 @@ def keyboard(ip, keyin):
 		except:
 			message = Gtk.MessageDialog(parent=None, 
                             flags=0, 
-                            type=Gtk.MESSAGE_WARNING, 
-                            buttons=Gtk.BUTTONS_OK, 
-                            message_format=None)
+                            message_type=Gtk.MessageType.WARNING, 
+                            buttons=Gtk.ButtonsType.OK, 
+                            text=None)
 			message.set_markup("Roku not found!\nPlease try again.")
 			message.run()
 			quit()
