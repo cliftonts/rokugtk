@@ -130,7 +130,7 @@ class Application():
 		self.vbox.pack_start(self.hbox_5, True, True, 0)
 
 		self.window.add(self.vbox)
-		self.window.set_size_request(400, 400)
+		self.window.set_size_request(200, 200)
 
 
 	def connect_signals(self):
@@ -349,9 +349,9 @@ def keyboard(ip, keyin):
 		except:
 			message = Gtk.MessageDialog(parent=None, 
                             flags=0, 
-                            type=Gtk.MESSAGE_WARNING, 
-                            buttons=Gtk.BUTTONS_OK, 
-                            message_format=None)
+                            message_type=Gtk.MessageType.WARNING, 
+                            buttons=Gtk.ButtonsType.OK, 
+                            text=None)
 			message.set_markup("Roku not found!\nPlease try again.")
 			message.run()
 			quit()
